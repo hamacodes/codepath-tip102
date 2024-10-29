@@ -29,7 +29,23 @@ def print_linked_list(head):
         current = current.next
 
 def merge_missions(mission1, mission2):
-    pass
+    
+    # Base cases
+    if mission1 is None:
+        return mission2
+    if mission2 is None:
+        return mission1
+    
+    # Recursive cases
+    if mission1.value < mission2.value:
+        mission1.next = merge_missions(mission1.next, mission2)
+        return mission1
+    else:
+        mission2.next = merge_missions(mission1, mission2.next)
+        return mission2
+
+
+
 
 """
 Set 2
