@@ -44,7 +44,11 @@ def merge_missions(mission1, mission2):
         mission2.next = merge_missions(mission1, mission2.next)
         return mission2
 
+# Set 1 Tests:
+mission1 = Node(1, Node(2, Node(4)))
+mission2 = Node(1, Node(3, Node(4)))
 
+print_linked_list(merge_missions(mission1, mission2))  # Expected: 1 -> 1 -> 2 -> 3 -> 4 -> 4 
 
 
 """
