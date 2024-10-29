@@ -55,13 +55,32 @@ print_linked_list(merge_missions(mission1, mission2))  # Expected: 1 -> 1 -> 2 -
 Set 2
 
 Understand:
-
+- We are given a linked list of spells
+- each spell has a name and a next pointer
+- we are to write a function weave_spells() to merge the spells in alternating order
+- we return the head of the new linked list
 
 Plan:
+- check if there are nodes in each list
+- merge the nodes in alternating order
+- our base case is if both the lists are exhausted
 
 """
 # Implement:
+def weave_spells(spell_a, spell_b):
+    if spell_a is None:
+        return spell_b
+    if spell_b is None:
+        return spell_a
+    
+    spell_a.next = weave_spells(spell_b, spell_a.next)
+    return spell_a
 
+# Set 2 Tests:
+spell_a = Node('A', Node('C', Node('E')))
+spell_b = Node('B', Node('D', Node('F')))
+
+print_linked_list(weave_spells(spell_a, spell_b))  # Expected: A -> B -> C -> D -> E -> F
 
 """
 Advanced Set 1
