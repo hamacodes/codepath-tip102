@@ -75,12 +75,59 @@ print(find_treasure(rooms, 5))   # Expected: (-1, -1)
 Set 2
 
 Understand:
-
+- We are given a list of integers
+- we are to write a function merge_sort_playlist() to sort the list
+- we return the sorted list
+- we are to use the merge sort algorithm
 
 Plan:
-
+- we define a helper function that takes two lists as arguments
+- we iterate through the lists using pointers
+- we compare the elements at the pointers
+- we add the smaller element to the merged list
+- we increment the pointer of the list with the smaller element
+- we add the remaining elements from
+- we return the merged list
 """
 # Implement:
+def merge_sort_helper(left_arr, right_arr):
+    merged = []
+    i = j = 0
+    
+    # Use pointers to iterate through left_arr and right_arr
+    while i < len(left_arr) and j < len(right_arr):
+        if left_arr[i] < right_arr[j]:
+            merged.append(left_arr[i])
+            i += 1
+        else:
+            merged.append(right_arr[j])
+            j += 1
+    
+    # Add any remaining elements from the left and right halves
+    merged.extend(left_arr[i:])
+    merged.extend(right_arr[j:])
+    
+    return merged
+
+def merge_sort_playlist(playlist):
+    # Base Case: If the list has 1 or 0 elements, it's already sorted
+    if len(playlist) <= 1:
+        return playlist
+    
+    # Recursive Cases: Divide the list into two halves
+    mid = len(playlist) // 2
+    left_half = merge_sort_playlist(playlist[:mid])
+    right_half = merge_sort_playlist(playlist[mid:])
+    
+    # Use the helper to merge the sorted halves
+    return merge_sort_helper(left_half, right_half)
+
+# Example Usage
+print(merge_sort_playlist(["Formation", "Crazy in Love", "Halo"]))  
+# Expected: ['Crazy in Love', 'Formation', 'Halo']
+
+print(merge_sort_playlist(["Single Ladies", "Love on Top", "Irreplaceable"]))  
+# Expected: ['Irreplaceable', 'Love on Top', 'Single Ladies']
 
 
 """
