@@ -130,10 +130,58 @@ print(evaluate_ternary_expression_recursive("T?T?F:5:3"))  # Expected output: "F
 Advanced Set 2
 
 Understand:
-
+- We are given a string 'scroll' that represents a scroll with a message
+- the message consists of characters and numbers
+- the numbers represent the number of times the characters are repeated
+- we are to write a function decode_scroll_recursive() to decode the message
+- we return the decoded message
 
 Plan:
+- we define a helper function that takes an index as an argument
+- we iterate through the characters in the scroll
+- if the character is a digit, we build the number
+- if the character is '[', we start a new level of recursion for the content inside brackets
+- if the character is ']', we return the current string and the current index to the previous level
+- if the character is a regular character, we add it to the current string
+- we return the current string and index
 
 """
 # Implement:
+def decode_scroll_recursive(scroll):
+    def helper(index):
+        current_string = ""
+        current_num = 0
+        
+        while index < len(scroll):
+            char = scroll[index]
+            
+            if char.isdigit():
+                # Build the number
+                current_num = current_num * 10 + int(char)
+            elif char == '[':
+                # Start a new level of recursion for content inside brackets
+                decoded_string, index = helper(index + 1)
+                # Repeat the decoded content 'current_num' times
+                current_string += decoded_string * current_num
+                current_num = 0
+            elif char == ']':
+                # Return the current string and the current index to the previous level
+                return current_string, index
+            else:
+                # Regular character
+                current_string += char
+            
+            index += 1
+            
+        return current_string, index
 
+    # Start the recursion and only return the decoded result
+    decoded_result, _ = helper(0)
+    return decoded_result
+
+# Test cases
+scroll = "3[Coral2[Shell]]"
+print(decode_scroll_recursive(scroll))  # Expected: "CoralShellShellCoralShellShellCoralShellShell"
+
+scroll = "2[Poseidon3[Sea]]"
+print(decode_scroll_recursive(scroll))  # Expected: "PoseidonSeaSeaSeaPoseidonSeaSeaSea"
