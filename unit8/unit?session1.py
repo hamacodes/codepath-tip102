@@ -89,12 +89,55 @@ print(ocean_depth(tidal_zones))  # Expected output: 4
 Advanced Set 1
 
 Understand:
-
+- We are given two binary trees and need to check if they have identical structures and values.
+- Identical trees have:
+  - The same value at the corresponding nodes.
+  - The same structure, meaning that each left and right child pair is mirrored between the two trees.
+- If any difference in structure or value is found, we return False; otherwise, return True.
 
 Plan:
+1. Recursive Comparison:
+   - For each node pair (one from each tree), check if both nodes are None. If so, they're identical at this level.
+   - If only one node is None, the trees are not identical.
+   - If both nodes exist, check if their values are the same.
+   - Recursively compare the left and right children of each node pair.
+2. Base Cases:
+   - If both nodes are None, they match, so return True.
+   - If one node is None and the other is not, return False.
+   - If node values differ, return False.
+3. Recursive Calls:
+   - Call the function recursively on left and right children, combining the results with logical "and".
+
+Time Complexity:
+- Each node in each tree is visited once, so the time complexity is O(n), where n is the number of nodes in the trees.
+
+Space Complexity:
+- Since recursion reaches the depth of the tree, the space complexity is O(h), where h is the height of the tree.
+- In a balanced binary tree, h is O(log n).
 
 """
 # Implement:
+def is_identical(root1, root2):
+    # Base cases
+    if root1 is None and root2 is None:
+        return True
+    if root1 is None or root2 is None:
+        return False
+    if root1.val != root2.val:
+        return False
+    
+    # Recursive case: check left and right subtrees
+    return is_identical(root1.left, root2.left) and is_identical(root1.right, root2.right)
+
+# Example usage
+root1 = TreeNode(1, TreeNode(2), TreeNode(3))
+root2 = TreeNode(1, TreeNode(2), TreeNode(3))
+
+root3 = TreeNode(1, TreeNode(2))
+root4 = TreeNode(1, None, TreeNode(2))
+
+print(is_identical(root1, root2))  # Expected output: True
+print(is_identical(root3, root4))  # Expected output: False
 
 """
 Advanced Set 2
