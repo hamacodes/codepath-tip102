@@ -273,10 +273,59 @@ print(lca(fern, "bamboo", "dahlia")) # Expected output: "cactus"
 Advanced Set 2
 
 Understand:
-
+- We are given a binary tree where each node represents a friend, and each node's value is the number of coins the friend has.
+- We need to distribute the coins such that each node ends up with exactly 1 coin.
+- A move consists of transferring a coin from one node to an adjacent node (parent-child relationship).
+- We need to determine the minimum number of moves to achieve this distribution.
 
 Plan:
+1. Perform a post-order traversal (left-right-root) to compute excess coins for each node:
+   - Calculate the number of coins each node needs to give or receive to have exactly 1 coin.
+   - At each node:
+     - Excess coins = node.val - 1 (where a positive value means excess coins, and a negative value means coins needed).
+   - Use recursion to compute moves needed as coins are moved up the tree from child to parent.
+2. Accumulate the number of moves:
+   - Each excess or shortage of coins at a node requires moves equal to the absolute value of the excess or shortage.
+   - Add these moves to a counter as we backtrack through the tree.
+3. Return the total moves counter.
+
+Time Complexity:
+- Since we perform a post-order traversal and visit each node once, the time complexity is O(n), where n is the number of nodes.
+- The space complexity is O(h), where h is the height of the tree, due to the recursive call stack.
 
 """
 # Implement:
+def distribute_coins(root):
+    # Initialize a counter for moves
+    moves = 0
 
+    # Post-order traversal helper function
+    def dfs(node):
+        nonlocal moves
+        if node is None:
+            return 0
+        
+        # Recursive calls for left and right children
+        left_excess = dfs(node.left)
+        right_excess = dfs(node.right)
+        
+        # Calculate the excess coins at this node
+        excess = node.val - 1 + left_excess + right_excess
+        
+        # Accumulate moves by the absolute value of excess coins at this node
+        moves += abs(excess)
+        
+        # Return excess coins to parent
+        return excess
+
+    # Start the traversal
+    dfs(root)
+    
+    return moves
+
+# Example usage
+root1 = TreeNode(3, TreeNode(0), TreeNode(0))
+root2 = TreeNode(0, TreeNode(3), TreeNode(0))
+
+print(distribute_coins(root1))  # Expected output: 2
+print(distribute_coins(root2))  # Expected output: 3
