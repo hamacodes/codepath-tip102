@@ -124,13 +124,70 @@ print(print_tree(remove_plant(collection, "Pilea")))  # Expected output: ['Money
 Set 2
 
 Understand:
-
+- We have a Binary Search Tree (BST) where each node represents a pearl of a specific size.
+- We need to find the minimum difference between the sizes of any two different pearls.
+- In a BST, an inorder traversal provides a sorted list of values, so the minimum difference will be between two adjacent nodes in the inorder traversal.
 
 Plan:
+1. Perform an inorder traversal of the BST:
+   - This will provide a sorted list of pearl sizes in ascending order.
+2. Calculate the minimum difference:
+   - Initialize a variable to store the minimum difference.
+   - Iterate through the sorted list and find the difference between each pair of adjacent values.
+   - Update the minimum difference if a smaller difference is found.
+3. Return the minimum difference.
+
+Time Complexity:
+- The inorder traversal of the BST takes O(n) time, where n is the number of nodes, as we visit each node once.
+- The calculation of the minimum difference also takes O(n).
+- Therefore, the overall time complexity is O(n).
 
 """
 # Implement:
+class Pearl:
+    def __init__(self, size=0, left=None, right=None):
+        self.val = size
+        self.left = left
+        self.right = right
 
+def min_diff_in_pearl_sizes(pearls):
+    # Helper function to perform inorder traversal
+    def inorder(node):
+        if node is None:
+            return []
+        return inorder(node.left) + [node.val] + inorder(node.right)
+
+    # Perform inorder traversal to get a sorted list of pearl sizes
+    sorted_sizes = inorder(pearls)
+    
+    # Initialize minimum difference as a large number
+    min_diff = float('inf')
+    
+    # Calculate the minimum difference between adjacent sizes
+    for i in range(1, len(sorted_sizes)):
+        min_diff = min(min_diff, sorted_sizes[i] - sorted_sizes[i - 1])
+    
+    return min_diff
+
+# Helper function to build tree from list (for testing purposes)
+def build_tree(values):
+    if not values:
+        return None
+    
+    def insert_level_order(index):
+        if index >= len(values) or values[index] is None:
+            return None
+        root = Pearl(values[index])
+        root.left = insert_level_order(2 * index + 1)
+        root.right = insert_level_order(2 * index + 2)
+        return root
+
+    return insert_level_order(0)
+
+# Example usage
+values = [4, 2, 6, 1, 3, None, 8]
+pearls = build_tree(values)
+print(min_diff_in_pearl_sizes(pearls))  # Expected output: 1
 
 """
 Advanced Set 1
