@@ -43,13 +43,47 @@ print(find_flower(flower_field, "Hibiscus"))  # Expected output: False
 Set 2
 
 Understand:
-
+- We are given a binary tree where each node represents a layer in the ocean.
+- Our goal is to determine the depth (or height) of the tree, which is the longest path from the root to any leaf node.
+- In this context, the depth is the number of nodes on the longest path from the root to a leaf node.
 
 Plan:
+- We can use a recursive approach to traverse the tree.
+- For each node, calculate the depth of the left and right subtrees.
+- The depth of the current node will be 1 (for the node itself) plus the maximum depth of its left or right subtree.
+- The base case occurs when a node is None (no children), at which point we return 0.
 
+Time Complexity:
+- Since we visit each node once to calculate the maximum depth, the time complexity is O(n), where n is the number of nodes in the tree.
+- For a balanced binary tree, the recursion depth will be O(log n) due to the logarithmic height of the tree.
 """
 # Implement:
+def ocean_depth(root):
+    # Base case: if the node is None, it contributes 0 to the depth
+    if root is None:
+        return 0
+    
+    # Recursive call to calculate the depth of left and right subtrees
+    left_depth = ocean_depth(root.left)
+    right_depth = ocean_depth(root.right)
+    
+    # Current depth is 1 + max depth of left or right subtree
+    return 1 + max(left_depth, right_depth)
 
+# Example usage
+ocean = TreeNode("Sunlight", 
+                 TreeNode("Twilight", 
+                          TreeNode("Abyss", 
+                                   TreeNode("Trenches")), TreeNode("Anglerfish")),
+                 TreeNode("Squid", TreeNode("Giant Squid")))
+
+tidal_zones = TreeNode("Spray Zone", 
+                       TreeNode("Beach"), 
+                       TreeNode("High Tide", 
+                                TreeNode("Middle Tide", None, TreeNode("Low Tide"))))
+
+print(ocean_depth(ocean))        # Expected output: 4
+print(ocean_depth(tidal_zones))  # Expected output: 4
 
 """
 Advanced Set 1
