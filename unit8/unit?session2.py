@@ -193,12 +193,81 @@ print(min_diff_in_pearl_sizes(pearls))  # Expected output: 1
 Advanced Set 1
 
 Understand:
-
+- We are given a binary tree where each node represents a plant species.
+- Our goal is to find the Lowest Common Ancestor (LCA) of two given species based on lexicographical ordering.
+- The LCA of two nodes is the lowest node in the tree that has both nodes as descendants, where a node is allowed to be a descendant of itself.
+- Each node has a reference to its parent, allowing us to trace back to the root from any node.
 
 Plan:
+1. **Trace the Path to Root**:
+   - Start from each node (`p` and `q`) and trace back to the root, storing the path in a set.
+   - This will give us the ancestry paths for both nodes.
+2. **Find the Common Ancestor**:
+   - Starting from one node, check each ancestor in the set of ancestors of the other node.
+   - The first common ancestor encountered in the path to the root is the LCA.
+
+3. **Time Complexity**:
+   - Since we are only traversing from each node to the root, the time complexity is O(h), where h is the height of the tree.
+   - In a balanced binary tree, this would be O(log n).
+
+4. **Space Complexity**:
+   - We use a set to store the ancestors of one node, so the space complexity is O(h), where h is the height of the tree.
 
 """
 # Implement:
+def lca(root, p_species, q_species):
+    # Helper function to find the node with the given species name
+    def find_node(root, species):
+        if not root:
+            return None
+        if root.val == species:
+            return root
+        left_search = find_node(root.left, species)
+        if left_search:
+            return left_search
+        return find_node(root.right, species)
+
+    # Get the nodes for p and q based on species names
+    p_node = find_node(root, p_species)
+    q_node = find_node(root, q_species)
+    
+    # Edge case: If either species is not found, return None
+    if not p_node or not q_node:
+        return None
+    
+    # Trace path to root for p_node
+    ancestors_p = set()
+    while p_node:
+        ancestors_p.add(p_node)
+        p_node = p_node.parent
+    
+    # Trace path to root for q_node and find the first common ancestor
+    while q_node:
+        if q_node in ancestors_p:
+            return q_node.val  # Return the value of the common ancestor
+        q_node = q_node.parent
+    
+    return None  # In case there is no common ancestor (should not happen if tree is well-formed)
+
+# Example usage
+fern = TreeNode("fern")
+cactus = TreeNode("cactus", fern)
+rose = TreeNode("rose", fern)
+bamboo = TreeNode("bamboo", cactus)
+dahlia = TreeNode("dahlia", cactus)
+lily = TreeNode("lily", rose)
+oak = TreeNode("oak", rose)
+
+# Build the tree structure with parent pointers
+fern.left, fern.right = cactus, rose
+cactus.left, cactus.right = bamboo, dahlia
+rose.left, rose.right = lily, oak
+
+# Test the LCA function
+print(lca(fern, "cactus", "rose"))  # Expected output: "fern"
+print(lca(fern, "bamboo", "oak"))   # Expected output: "fern"
+print(lca(fern, "bamboo", "dahlia")) # Expected output: "cactus"
+
 
 """
 Advanced Set 2
