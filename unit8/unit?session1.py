@@ -143,10 +143,56 @@ print(is_identical(root3, root4))  # Expected output: False
 Advanced Set 2
 
 Understand:
-
+- We are given a binary tree and need to check if it is symmetric around its center.
+- A tree is symmetric if its left and right subtrees are mirror images of each other.
+- To be symmetric:
+  - The root's left and right subtrees must have the same structure and node values, but mirrored.
+  - Each subtree's left child should match the other subtree's right child, and vice versa.
 
 Plan:
+1. Define a helper function `is_mirror` to recursively compare two subtrees for mirror symmetry.
+2. For each pair of nodes (one from each subtree):
+   - If both nodes are None, they are symmetric at this level.
+   - If only one node is None, they are not symmetric.
+   - If both nodes exist, check if their values are the same.
+   - Recursively check if:
+     - The left child of one subtree is symmetric to the right child of the other.
+     - The right child of one subtree is symmetric to the left child of the other.
+3. Call `is_mirror` on the root's left and right children to check symmetry.
+
+Time Complexity:
+- We visit each node once, so the time complexity is O(n), where n is the number of nodes in the tree.
+
+Space Complexity:
+- The recursion depth is O(h), where h is the height of the tree. For a balanced tree, h is O(log n).
 
 """
 # Implement:
+def is_symmetric(root):
+    # Helper function to check if two subtrees are mirrors of each other
+    def is_mirror(left, right):
+        # Base case: both nodes are None
+        if left is None and right is None:
+            return True
+        # If only one node is None, they aren't symmetric
+        if left is None or right is None:
+            return False
+        # Check if current nodes are equal and their children are mirrors of each other
+        return (left.val == right.val 
+                and is_mirror(left.left, right.right) 
+                and is_mirror(left.right, right.left))
+    
+    # Start recursion with the left and right children of the root
+    return is_mirror(root.left, root.right) if root else True
 
+# Example usage
+coral1 = TreeNode('A', 
+                  TreeNode('B', TreeNode('C'), TreeNode('D')), 
+                  TreeNode('B', TreeNode('D'), TreeNode('C')))
+
+coral2 = TreeNode('A', 
+                  TreeNode('B', TreeNode('C'), TreeNode('D')), 
+                  TreeNode('B', TreeNode('C'), TreeNode('D')))
+
+print(is_symmetric(coral1))  # Expected output: True
+print(is_symmetric(coral2))  # Expected output: False
