@@ -76,16 +76,102 @@ next_order2 = find_next_order(cupcakes, cookies)
 print(next_order1.val if next_order1 else None)  # Expected: Eclair
 print(next_order2.val if next_order2 else None)  # Expected: None
 
+
 """
 Set 2
 
-Understand:
+Problem 6: Sectioning Off Cursed Zones
 
+Understand:
+- Given a binary tree `hotel`, where nodes represent rooms.
+- Need to find the smallest subtree that contains all the deepest nodes.
+- Deepest nodes are those with the maximum depth.
+- Return the root of the smallest subtree containing all deepest nodes.
 
 Plan:
+- Use recursion to find the depth of each node.
+- For each node, keep track of:
+  - Its depth.
+  - If its left and right subtrees contain the deepest nodes.
+- The current node is the LCA (Lowest Common Ancestor) of deepest nodes if left and right depths are equal and maximum.
+- Time Complexity: O(n), where n is the number of nodes.
+- Space Complexity: O(h), due to recursion stack, where h is the height of the tree.
+"""
+
+def smallest_subtree_with_deepest_rooms(hotel):
+    def helper(node):
+        if not node:
+            return (0, None)
+        left_depth, left_subtree = helper(node.left)
+        right_depth, right_subtree = helper(node.right)
+        
+        if left_depth > right_depth:
+            return (left_depth + 1, left_subtree)
+        elif right_depth > left_depth:
+            return (right_depth + 1, right_subtree)
+        else:
+            return (left_depth + 1, node)
+    
+    return helper(hotel)[1]
+
+# Tests
+# Example Usage:
 
 """
-# Implement:
+         Lobby
+        /     \
+       /       \
+      101      102
+     /   \    /   \
+   201  202  203  204
+        /  \ 
+      😱   👻
+"""
+
+rooms1 = TreeNode("Lobby")
+rooms1.left = TreeNode(101)
+rooms1.right = TreeNode(102)
+rooms1.left.left = TreeNode(201)
+rooms1.left.right = TreeNode(202)
+rooms1.right.left = TreeNode(203)
+rooms1.right.right = TreeNode(204)
+rooms1.left.right.left = TreeNode("😱")
+rooms1.left.right.right = TreeNode("👻")
+
+"""
+      Lobby
+     /     \
+   101     102
+     \
+     💀
+"""
+
+rooms2 = TreeNode("Lobby")
+rooms2.left = TreeNode(101)
+rooms2.right = TreeNode(102)
+rooms2.left.right = TreeNode("💀")
+
+def print_tree(root):
+    # Simple BFS traversal to print tree values
+    if not root:
+        print([])
+        return
+    from collections import deque
+    queue = deque([root])
+    result = []
+    while queue:
+        node = queue.popleft()
+        result.append(node.val if node else None)
+        if node:
+            queue.append(node.left)
+            queue.append(node.right)
+    # Remove trailing Nones
+    while result and result[-1] is None:
+        result.pop()
+    print(result)
+
+print_tree(smallest_subtree_with_deepest_rooms(rooms1))  # Expected: [202, '😱', '👻']
+print_tree(smallest_subtree_with_deepest_rooms(rooms2))  # Expected: ['💀']
 
 
 """
