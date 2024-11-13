@@ -290,14 +290,88 @@ inventory2 = build_tree(inventory_items)
 print(vertical_inventory_display(inventory2))  
 # Expected: [['Muffin'], ['Croissant', 'Pie'], ['Bread', 'Scone', 'Bagel'], ['Donut', 'Cake'], ['Tart']]
 
+
 """
 Advanced Set 2
 
-Understand:
+Problem 6: Step by Step Directions to Hotel Room
 
+Understand:
+- Given a binary tree `hotel`, with unique values from 1 to n.
+- Need to find the shortest path from node `s` to node `t`.
+- Return directions as a string of 'L', 'R', 'U'.
+- 'L': move to left child, 'R': move to right child, 'U': move to parent.
 
 Plan:
+- Find the Lowest Common Ancestor (LCA) of nodes `s` and `t`.
+- Find paths from LCA to `s` and `t`.
+- Replace moves to `s` with 'U'.
+- Concatenate the moves to `t`.
+- Time Complexity:
+  - O(n), since we may need to traverse the entire tree.
+- Space Complexity:
+  - O(n), due to recursion stack and paths storage.
+"""
+
+def count_cursed_hallways(hotel, current_location, room_number):
+    def find_LCA(node):
+        if not node or node.val == current_location or node.val == room_number:
+            return node
+        left = find_LCA(node.left)
+        right = find_LCA(node.right)
+        if left and right:
+            return node
+        return left if left else right
+    
+    def find_path(node, target, path):
+        if not node:
+            return False
+        if node.val == target:
+            return True
+        path.append('L')
+        if find_path(node.left, target, path):
+            return True
+        path.pop()
+        path.append('R')
+        if find_path(node.right, target, path):
+            return True
+        path.pop()
+        return False
+    
+    lca = find_LCA(hotel)
+    path_to_start = []
+    path_to_dest = []
+    
+    find_path(lca, current_location, path_to_start)
+    find_path(lca, room_number, path_to_dest)
+    
+    return 'U' * len(path_to_start) + ''.join(path_to_dest)
+
+# Tests
+# Example Usage 1:
 
 """
-# Implement:
+       5
+      / \
+     1   2 
+    /   / \
+   3   6   4
+"""
+
+room_nums = [5,1,2,3,None,6,4]
+hotel1 = build_tree(room_nums)
+
+print(count_cursed_hallways(hotel1, 3, 6))  # Expected: UURL
+
+# Example Usage 2:
+
+"""
+  1
+ /
+2
+"""
+
+hotel2 = TreeNode(1, TreeNode(2))
+
+print(count_cursed_hallways(hotel2, 2, 1))  # Expected: U
 
