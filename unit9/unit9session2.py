@@ -26,6 +26,36 @@ class TreeNode():
         self.left = left
         self.right = right
 
+def build_tree(values):
+  if not values:
+      return None
+
+  def get_key_value(item):
+      if isinstance(item, tuple):
+          return item[0], item[1]
+      else:
+          return None, item
+
+  key, value = get_key_value(values[0])
+  root = TreeNode(value, key)
+  queue = deque([root])
+  index = 1
+
+  while queue:
+      node = queue.popleft()
+      if index < len(values) and values[index] is not None:
+          left_key, left_value = get_key_value(values[index])
+          node.left = TreeNode(left_value, left_key)
+          queue.append(node.left)
+      index += 1
+      if index < len(values) and values[index] is not None:
+          right_key, right_value = get_key_value(values[index])
+          node.right = TreeNode(right_value, right_key)
+          queue.append(node.right)
+      index += 1
+
+  return root
+
 def find_next_order(order_tree, order):
     if not order_tree:
         return None
@@ -177,13 +207,88 @@ print_tree(smallest_subtree_with_deepest_rooms(rooms2))  # Expected: ['💀']
 """
 Advanced Set 1
 
-Understand:
+Problem 6: Vertical Bakery Display
 
+Understand:
+- Given a binary tree representing bakery items.
+- Need to perform vertical order traversal.
+- Items in the same column are grouped together.
+- If items are in the same row and column, they are listed from left to right.
 
 Plan:
+- Use BFS traversal to assign coordinates to each node:
+  - Horizontal distance (hd): column index.
+  - Level: row index.
+- Use a dictionary to map hd to list of (level, value).
+- After traversal, sort the dictionary keys (columns), and for each column, sort the items by level and left-to-right order.
+- Time Complexity:
+  - O(n log n) due to sorting columns and items within columns.
+- Space Complexity:
+  - O(n), storing all nodes.
+- For balanced and unbalanced trees:
+  - Time and space complexities remain the same, but the height affects the maximum depth of recursion.
+"""
+
+def vertical_inventory_display(root):
+    from collections import defaultdict, deque
+    
+    if not root:
+        return []
+    
+    node_dict = defaultdict(list)
+    queue = deque([(root, 0, 0)])  # Node, hd, level
+    
+    while queue:
+        node, hd, level = queue.popleft()
+        node_dict[hd].append((level, node.val))
+        
+        if node.left:
+            queue.append((node.left, hd - 1, level + 1))
+        if node.right:
+            queue.append((node.right, hd + 1, level + 1))
+    
+    result = []
+    for hd in sorted(node_dict.keys()):
+        # Sort items by level and left-to-right order
+        column = [val for level, val in sorted(node_dict[hd], key=lambda x: (x[0]))]
+        result.append(column)
+    
+    return result
+
+# Tests
+# Example Usage 1:
 
 """
-# Implement:
+         Bread
+       /       \
+   Croissant    Donut
+                /   \
+             Bagel Tart
+"""
+
+inventory_items = ["Bread", "Croissant", "Donut", None, None, "Bagel", "Tart"]
+inventory1 = build_tree(inventory_items)
+
+print(vertical_inventory_display(inventory1))  
+# Expected: [['Croissant'], ['Bread', 'Bagel'], ['Donut'], ['Tart']]
+
+# Example Usage 2:
+
+"""
+         Bread
+       /       \
+   Croissant    Donut
+   /    \        /   \
+Muffin  Scone Bagel Tart
+        /       \
+      Pie     Cake
+"""
+
+inventory_items = ["Bread", "Croissant", "Donut", "Muffin", "Scone", "Bagel", "Tart", None, None, "Pie", None, "Cake"]
+inventory2 = build_tree(inventory_items)
+
+print(vertical_inventory_display(inventory2))  
+# Expected: [['Muffin'], ['Croissant', 'Pie'], ['Bread', 'Scone', 'Bagel'], ['Donut', 'Cake'], ['Tart']]
 
 """
 Advanced Set 2
