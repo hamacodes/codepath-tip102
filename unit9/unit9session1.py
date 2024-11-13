@@ -57,6 +57,23 @@ def build_tree(values):
 
   return root
 
+def print_tree(root):
+    if not root:
+        return "Empty"
+    result = []
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        if node:
+            result.append(node.val)
+            queue.append(node.left)
+            queue.append(node.right)
+        else:
+            result.append(None)
+    while result and result[-1] is None:
+        result.pop()
+    print(result)
+
 def zigzag_icing_order(cupcakes):
     if not cupcakes:
         return []
@@ -217,14 +234,48 @@ sweetness_levels = [8, 3, 10, 1, 6, None, 14, None, None, 4, 7, 13]
 display = build_tree(sweetness_levels)
 print(max_icing_difference(display))  # Expected: 13
 
+# Advanced Set 2
+
 """
-Advanced Set 2
+Problem 6: Topsy Turvy
 
 Understand:
-
+- Need to flip a binary tree according to specific rules.
+- Left child becomes the new root.
+- Original root becomes the new right child.
+- Original right child becomes the new left child.
+- Transformation is applied level by level.
 
 Plan:
+- Use recursion to reach the leftmost node.
+- Reassign pointers at each recursive call.
+- Keep track of parent and right sibling to update left and right pointers.
+- Time Complexity: O(n), visiting each node once.
+- Space Complexity: O(h), due to recursion stack.
+"""
+
+def flip_hotel(hotel):
+    def flip(node, parent=None, right_sibling=None):
+        if not node:
+            return parent
+        root = flip(node.left, node, node.right)
+        node.left = right_sibling
+        node.right = parent
+        return root
+    return flip(hotel)
+
+# Tests
+# Example Usage:
 
 """
-# Implement:
+      1
+    /   \
+   2     3
+  / \
+ 4   5
+"""
 
+rooms = [1, 2, 3, 4, 5]
+hotel = build_tree(rooms)
+flipped_hotel = flip_hotel(hotel)
+print_tree(flipped_hotel)  # Expected: [4, 5, 2, None, None, 3, 1]
