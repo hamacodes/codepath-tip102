@@ -168,16 +168,54 @@ hotel2 = build_tree(rooms)
 print(kth_spookiest(hotel2, 3))  # Expected: 201
 
 
+# Advanced Set 1
+
 """
-Advanced Set 1
+Problem 6: Maximum Icing Difference
 
 Understand:
-
+- Need to find the maximum difference in sweetness between any two cupcakes where one is an ancestor of the other.
+- The difference is the absolute value of their sweetness levels.
 
 Plan:
+- Use recursion to traverse the tree.
+- At each node, keep track of min and max sweetness along the path.
+- Update the maximum difference at each node.
+- Time Complexity: O(n), visiting each node once.
+- Space Complexity: O(h), due to recursion stack.
+"""
+
+def max_icing_difference(root):
+    def helper(node, current_min, current_max):
+        if not node:
+            return current_max - current_min
+        
+        current_min = min(current_min, node.val)
+        current_max = max(current_max, node.val)
+        
+        left_diff = helper(node.left, current_min, current_max)
+        right_diff = helper(node.right, current_min, current_max)
+        
+        return max(left_diff, right_diff)
+    
+    return helper(root, root.val, root.val)
+
+# Tests
+# Example Usage:
 
 """
-# Implement:
+            8
+           /  \
+         3     10
+        / \      \
+       1   6     14
+          /  \    /
+         4    7  13
+"""
+
+sweetness_levels = [8, 3, 10, 1, 6, None, 14, None, None, 4, 7, 13]
+display = build_tree(sweetness_levels)
+print(max_icing_difference(display))  # Expected: 13
 
 """
 Advanced Set 2
