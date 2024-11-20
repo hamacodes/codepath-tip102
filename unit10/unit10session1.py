@@ -144,3 +144,65 @@ danielle.neighbors.extend([lily, cillian])
 copy = copy_seating(lily)
 print(compare_graphs(lily, copy))  # Expected Output: True
 
+# Advanced Set 1
+
+"""
+Problem 8: Number of Airline Regions
+
+Understand:
+- Given:
+    - An n x n adjacency matrix `is_connected`, where `is_connected[i][j] = 1` if there is a direct flight between airports i and j.
+- Need to:
+    - Find the number of connected components (regions) in the graph.
+- Assumptions:
+    - The graph is undirected since flights are bidirectional.
+    - Airports are labeled from 0 to n-1.
+
+Plan:
+- Use DFS or BFS to traverse the graph.
+- Keep track of visited airports.
+- For each airport:
+    - If not visited, perform DFS/BFS starting from that airport.
+    - Increment the count of regions.
+- Complexities:
+    - Time Complexity: O(n^2), since we might check each edge.
+    - Space Complexity: O(n), for the visited array.
+"""
+
+def num_airline_regions(is_connected):
+    n = len(is_connected)
+    visited = [False] * n
+    count = 0
+
+    def dfs(i):
+        for j in range(n):
+            if is_connected[i][j] == 1 and not visited[j]:
+                visited[j] = True
+                dfs(j)
+
+    for i in range(n):
+        if not visited[i]:
+            visited[i] = True
+            dfs(i)
+            count += 1
+
+    return count
+
+# Example Usage:
+
+is_connected1 = [
+    [1, 1, 0],
+    [1, 1, 0],
+    [0, 0, 1]
+]
+
+is_connected2 = [
+    [1, 0, 0, 1],
+    [0, 1, 1, 0],
+    [0, 1, 1, 0],
+    [1, 0, 0, 1]
+]
+
+print(num_airline_regions(is_connected1))  # Output: 2
+print(num_airline_regions(is_connected2))  # Output: 2
+
