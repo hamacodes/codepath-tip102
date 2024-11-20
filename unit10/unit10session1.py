@@ -66,37 +66,81 @@ boarding_passes_2 = [
 print(find_itinerary(boarding_passes_1))  # Output: ['LAX', 'SFO', 'JFK', 'ATL', 'ORD']
 print(find_itinerary(boarding_passes_2))  # Output: ['LHR', 'DFW', 'JFK', 'LAX', 'DXB']
 
+# Set 2
+
 """
-Set 2
+Problem 8: Copying Seating Arrangements
 
 Understand:
-
-
-Plan:
-
-"""
-# Implement:
-
-
-"""
-Advanced Set 1
-
-Understand:
-
+- Given:
+    - A graph representing seating arrangements, where each Node has a value (celebrity's name) and a list of neighbors (adjacent seats).
+- Need to:
+    - Make a deep copy (clone) of the graph.
+- Constraints:
+    - Each Node is unique.
+    - Need to copy both nodes and edges.
+- Testing:
+    - Provided a function `compare_graphs()` to test if the copy is correct.
 
 Plan:
-
+- Use DFS or BFS to traverse the graph.
+- Maintain a mapping from original nodes to their copies to avoid cycles and duplicate nodes.
+- For each node:
+    - Create a copy of the node.
+    - Recursively copy its neighbors.
+- Return the copy of the starting node.
+- Complexities:
+    - Time Complexity: O(N + E), where N is the number of nodes and E is the number of edges.
+    - Space Complexity: O(N), for the mapping and recursion stack.
 """
-# Implement:
 
-"""
-Advanced Set 2
+class Node():
+    def __init__(self, val = 0, neighbors = None):
+        self.val = val
+        self.neighbors = neighbors if neighbors is not None else []
 
-Understand:
+# Function to test if two seating arrangements (graphs) are identical
+def compare_graphs(node1, node2, visited=None):
+    if visited is None:
+        visited = set()
+    if node1.val != node2.val:
+        return False
+    visited.add(node1)
+    if len(node1.neighbors) != len(node2.neighbors):
+        return False
+    for n1, n2 in zip(node1.neighbors, node2.neighbors):
+        if n1 not in visited:
+            if not compare_graphs(n1, n2, visited):
+                return False
+    return True
 
+def copy_seating(seat):
+    old_to_new = {}
 
-Plan:
+    def clone(node):
+        if node in old_to_new:
+            return old_to_new[node]
+        copy = Node(node.val)
+        old_to_new[node] = copy
+        for neighbor in node.neighbors:
+            copy.neighbors.append(clone(neighbor))
+        return copy
 
-"""
-# Implement:
+    return clone(seat)
+
+# Example Usage:
+
+# 'arrangement'
+
+lily = Node("Lily Gladstone")
+mark = Node("Mark Ruffalo")
+cillian = Node("Cillian Murphy")
+danielle = Node("Danielle Brooks")
+lily.neighbors.extend([mark, danielle])
+mark.neighbors.extend([lily, cillian])
+cillian.neighbors.extend([danielle, mark])
+danielle.neighbors.extend([lily, cillian])
+
+copy = copy_seating(lily)
+print(compare_graphs(lily, copy))  # Expected Output: True
 
