@@ -71,3 +71,69 @@ flights = {
 
 print(get_itinerary(flights, 'LAX', 'MIA'))  # Output: ['LAX', 'SFO', 'ORD', 'MIA'] or another valid path
 
+# Set 2
+
+"""
+Problem 8: Celebrity Feuds
+
+Understand:
+- Given:
+    - An integer `n` representing the number of celebrities labeled from 1 to n.
+    - A list `dislikes`, where each element `[a, b]` indicates that celebrity `a` does not get along with celebrity `b`.
+- Need to:
+    - Determine if it's possible to split the celebrities into two groups such that no two celebrities in the same group dislike each other.
+    - Return `True` if possible, `False` otherwise.
+- Constraints:
+    - The dislike relationship is mutual.
+    - This is equivalent to checking if the graph is bipartite.
+
+Plan:
+- Graph Representation:
+    - Build an undirected graph using an adjacency list.
+- Use Graph Coloring:
+    - Attempt to color the graph using two colors (0 and 1) without assigning the same color to adjacent nodes.
+- Algorithm Steps:
+    - Initialize an empty color dictionary.
+    - For each celebrity from 1 to n:
+        - If the celebrity is uncolored, perform BFS:
+            - Assign a color to the celebrity.
+            - For each neighbor:
+                - If the neighbor is uncolored, assign the opposite color.
+                - If the neighbor is colored and has the same color, return `False`.
+    - If all celebrities can be colored without conflict, return `True`.
+- Complexities:
+    - Time Complexity: O(N + E), where N is the number of celebrities and E is the number of dislikes.
+    - Space Complexity: O(N + E), for the adjacency list and color mapping.
+"""
+
+def can_split(n, dislikes):
+    from collections import defaultdict, deque
+    graph = defaultdict(list)
+    for a, b in dislikes:
+        graph[a].append(b)
+        graph[b].append(a)  # Dislikes are mutual
+    
+    color = {}
+    
+    for celebrity in range(1, n + 1):
+        if celebrity not in color:
+            queue = deque([celebrity])
+            color[celebrity] = 0
+            while queue:
+                current = queue.popleft()
+                for neighbor in graph[current]:
+                    if neighbor not in color:
+                        color[neighbor] = 1 - color[current]
+                        queue.append(neighbor)
+                    elif color[neighbor] == color[current]:
+                        return False
+    return True
+
+# Example Usage:
+
+dislikes_1 = [[1, 2], [1, 3], [2, 4]]
+dislikes_2 = [[1, 2], [1, 3], [2, 3]]
+
+print(can_split(4, dislikes_1))  # Output: True
+print(can_split(3, dislikes_2))  # Output: False
+
