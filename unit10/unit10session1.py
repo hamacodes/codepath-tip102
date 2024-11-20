@@ -206,3 +206,82 @@ is_connected2 = [
 print(num_airline_regions(is_connected1))  # Output: 2
 print(num_airline_regions(is_connected2))  # Output: 2
 
+# Advanced Set 2
+
+"""
+Problem 8: Network Strength
+
+Understand:
+- Given:
+    - An adjacency dictionary `celebrities`, where `celebrities[i]` is the list of celebrities that celebrity i likes.
+- Need to:
+    - Determine if the network is strongly connected.
+    - A graph is strongly connected if every node can reach every other node via directed edges.
+- Constraints:
+    - Mutual likes are not guaranteed.
+    - Names are unique identifiers.
+
+Plan:
+- Check Strong Connectivity:
+    - For each node, perform DFS or BFS to see if it can reach all other nodes.
+    - If any node cannot reach all others, return False.
+- Optimizations:
+    - Since we need to check reachability from every node, the time complexity is high.
+    - Alternatively, we can check if the graph is strongly connected by checking if the graph is connected in both directions.
+    - Use Kosaraju's algorithm for strongly connected components.
+- Implement Kosaraju's Algorithm:
+    - First DFS to get finishing times.
+    - Transpose the graph.
+    - Second DFS in the order of decreasing finishing times.
+    - If there's only one strongly connected component, the graph is strongly connected.
+- Complexities:
+    - Time Complexity: O(N + E), where N is the number of nodes and E is the number of edges.
+    - Space Complexity: O(N + E), for graphs and visited sets.
+"""
+
+def is_strongly_connected(celebrities):
+    nodes = list(celebrities.keys())
+
+    def dfs(graph, start, visited):
+        visited.add(start)
+        for neighbor in graph[start]:
+            if neighbor not in visited:
+                dfs(graph, neighbor, visited)
+
+    # First DFS
+    visited = set()
+    dfs(celebrities, nodes[0], visited)
+    if len(visited) != len(nodes):
+        return False
+
+    # Build reversed graph
+    reversed_graph = {node: [] for node in nodes}
+    for node in nodes:
+        for neighbor in celebrities[node]:
+            reversed_graph[neighbor].append(node)
+
+    # Second DFS on reversed graph
+    visited = set()
+    dfs(reversed_graph, nodes[0], visited)
+    if len(visited) != len(nodes):
+        return False
+
+    return True
+
+# Example Usage:
+
+celebrities1 = {
+    "Dev Patel": ["Meryl Streep", "Viola Davis"],
+    "Meryl Streep": ["Dev Patel", "Viola Davis"],
+    "Viola Davis": ["Meryl Streep", "Viola Davis"]
+}
+
+celebrities2 = {
+    "John Cho": ["Rami Malek", "Zoe Saldana", "Meryl Streep"],
+    "Rami Malek": ["John Cho", "Zoe Saldana", "Meryl Streep"],
+    "Zoe Saldana": ["Rami Malek", "John Cho", "Meryl Streep"],
+    "Meryl Streep": []
+}
+
+print(is_strongly_connected(celebrities1))  # Output: True
+print(is_strongly_connected(celebrities2))  # Output: False
