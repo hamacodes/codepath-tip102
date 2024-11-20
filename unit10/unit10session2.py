@@ -203,4 +203,81 @@ flight_routes_2 = [[4,3,1], [3,2,4], [3], [4], []]
 print(find_all_flight_routes(flight_routes_2))
 # Output: [[0, 4], [0, 3, 4], [0, 1, 3, 4], [0, 1, 2, 3, 4], [0, 1, 4]]
 
+# Advanced Set 2
 
+"""
+Problem 6: Hollywood Talent Summit
+
+Understand:
+- Given:
+    - A tree of cities represented by `roads`, where each element `[a, b]` indicates a bidirectional road between cities `a` and `b`.
+    - An integer `seats` representing the number of people that can travel in one car.
+    - Each city has one representative that needs to reach city `0`.
+- Need to:
+    - Calculate the minimum liters of fuel needed for all representatives to reach city `0`.
+    - Each road consumes one liter of fuel.
+    - Representatives can share cars along the way, not exceeding the number of `seats` per car.
+- Constraints:
+    - The network forms a tree (no cycles).
+    - All representatives must reach city `0`.
+
+Plan:
+- Use Post-Order DFS Traversal:
+    - Calculate the number of representatives in each subtree.
+    - Compute the number of cars (trips) needed from each city to its parent.
+    - Accumulate the total fuel based on the number of trips and the distance.
+- Algorithm Steps:
+    - Build an adjacency list from the `roads`.
+    - Initialize `total_fuel` to `0`.
+    - Define a recursive function `dfs(node, parent)`:
+        - Initialize `reps = 1` (the representative at the current city).
+        - For each neighbor (child) not equal to `parent`:
+            - `reps += dfs(neighbor, node)`
+        - If `node` is not the capital city (`0`):
+            - Calculate `trips = ceil(reps / seats)`
+            - `total_fuel += trips`
+        - Return `reps`
+    - Start DFS from city `0`.
+- Complexities:
+    - Time Complexity: O(N), where N is the number of cities.
+    - Space Complexity: O(N), for the adjacency list and recursion stack.
+- Note:
+    - Use `math.ceil()` to round up the number of trips.
+
+"""
+
+def minimum_fuel(roads, seats):
+    import math
+    from collections import defaultdict
+    
+    graph = defaultdict(list)
+    for a, b in roads:
+        graph[a].append(b)
+        graph[b].append(a)
+    
+    total_fuel = 0
+    
+    def dfs(node, parent):
+        nonlocal total_fuel
+        reps = 1  # One representative at current city
+        for neighbor in graph[node]:
+            if neighbor != parent:
+                reps += dfs(neighbor, node)
+        if node != 0:
+            trips = math.ceil(reps / seats)
+            total_fuel += trips
+        return reps
+    
+    dfs(0, -1)
+    return total_fuel
+
+# Example Usage:
+
+roads_1 = [[0,1],[0,2],[0,3]]
+seats_1 = 5
+
+roads_2 = [[3,1],[3,2],[1,0],[0,4],[0,5],[4,6]]
+seats_2 = 2
+
+print(minimum_fuel(roads_1, seats_1))  # Output: 3
+print(minimum_fuel(roads_2, seats_2))  # Output: 7
