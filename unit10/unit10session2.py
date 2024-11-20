@@ -137,3 +137,70 @@ dislikes_2 = [[1, 2], [1, 3], [2, 3]]
 print(can_split(4, dislikes_1))  # Output: True
 print(can_split(3, dislikes_2))  # Output: False
 
+# Advanced Set 1
+
+"""
+Problem 6: Find All Flight Routes
+
+Understand:
+- Given:
+    - A DAG representing flight routes, where `flight_routes[i]` lists all airports you can fly to directly from airport `i`.
+    - Airports are labeled from `0` to `n - 1`.
+- Need to:
+    - Find all possible flight paths from airport `0` to airport `n - 1`.
+    - Return the list of paths in any order.
+- Constraints:
+    - The graph is acyclic.
+    - Multiple paths may exist.
+
+Plan:
+- Use DFS with Backtracking:
+    - Start from airport `0`.
+    - Explore all possible paths recursively.
+    - Keep track of the current path.
+    - Add a copy of the current path to the result when the destination is reached.
+- Algorithm Steps:
+    - Initialize an empty list `result` to store all paths.
+    - Define a recursive function `dfs(node)`:
+        - If `node` is the destination, append a copy of `path` to `result`.
+        - For each neighbor in `flight_routes[node]`:
+            - Add neighbor to `path`.
+            - Recursively call `dfs(neighbor)`.
+            - Backtrack by removing the neighbor from `path`.
+    - Start DFS from airport `0`.
+- Complexities:
+    - Time Complexity: O(2^N * N), since there can be up to 2^N paths.
+    - Space Complexity: O(N), for recursion stack and path list.
+"""
+
+def find_all_flight_routes(flight_routes):
+    result = []
+    path = [0]
+    destination = len(flight_routes) - 1
+    
+    def dfs(node):
+        if node == destination:
+            result.append(path.copy())
+            return
+        for neighbor in flight_routes[node]:
+            path.append(neighbor)
+            dfs(neighbor)
+            path.pop()
+    
+    dfs(0)
+    return result
+
+# Example Usage 1:
+
+flight_routes_1 = [[1, 2], [3], [3], []]
+
+print(find_all_flight_routes(flight_routes_1))  # Output: [[0, 1, 3], [0, 2, 3]]
+
+# Example Usage 2:
+
+flight_routes_2 = [[4,3,1], [3,2,4], [3], [4], []]
+
+print(find_all_flight_routes(flight_routes_2))
+# Output: [[0, 4], [0, 3, 4], [0, 1, 3, 4], [0, 1, 2, 3, 4], [0, 1, 4]]
+
+
